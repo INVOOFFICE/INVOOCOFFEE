@@ -388,6 +388,29 @@ function applyControleCustomRange() {
   refreshFilteredView();
 }
 
+function setupCalendarOnlyDateInputs() {
+  const ids = ['controleDateFrom', 'controleDateTo'];
+  ids.forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.setAttribute('inputmode', 'none');
+    el.addEventListener('keydown', (e) => e.preventDefault());
+    el.addEventListener('paste', (e) => e.preventDefault());
+    el.addEventListener('drop', (e) => e.preventDefault());
+    const openPicker = () => {
+      if (typeof el.showPicker === 'function') {
+        try {
+          el.showPicker();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+    el.addEventListener('focus', openPicker);
+    el.addEventListener('click', openPicker);
+  });
+}
+
 function refreshFilteredView() {
   const all = cachedFactures;
   const toolbar = $('controleHistoToolbar');
@@ -784,6 +807,7 @@ function clearLocalConfig() {
 document.addEventListener('DOMContentLoaded', () => {
   loadSavedConfig();
   registerServiceWorker();
+  setupCalendarOnlyDateInputs();
   updatePwaInstallState();
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
