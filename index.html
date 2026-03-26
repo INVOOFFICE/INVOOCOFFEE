@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>☕ Coffee Shop — Caisse & Stock</title>
+<meta name="theme-color" content="#09BC8A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+</head>
+<body>
+<div id="appLockOverlay" class="app-lock-overlay" role="dialog" aria-modal="true" aria-labelledby="appLockTitleChoose" aria-hidden="false">
+  <div class="app-lock-card">
+    <p id="appLockErr" class="app-lock-err" role="alert" hidden></p>
+
+    <div id="appLockViewChoose" class="app-lock-view app-lock-view--minimal">
+      <div class="app-lock-hero">
+        <img src="./icons/ic-invoocoffee.svg" alt="" class="app-lock-logo" width="72" height="72" decoding="async" loading="eager" />
+        <h1 id="appLockTitleChoose" class="app-lock-title app-lock-title--center">INVOOCOFFEE</h1>
+        <p class="app-lock-tagline">Simplifiez vos ventes, servez plus vite</p>
+      </div>
+      <div class="app-lock-options" role="group" aria-label="Mode d’accès">
+        <button type="button" id="appLockChooseAdmin" class="app-lock-option">
+          <span class="app-lock-option-ico app-lock-option-ico--svg" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 12.2l2.2 2.2 4.8-4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="app-lock-option-body">
+            <span class="app-lock-option-title">Administration</span>
+          </span>
+        </button>
+        <button type="button" id="appLockChoosePlatform" class="app-lock-option">
+          <span class="app-lock-option-ico app-lock-option-ico--svg" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="app-lock-option-body">
+            <span class="app-lock-option-title">Caisse</span>
+          </span>
+        </button>
+        <button type="button" id="appLockChooseDemo" class="app-lock-option">
+          <span class="app-lock-option-ico app-lock-option-ico--svg" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="13" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M12 13l3-2M9 3h6M12 6v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </span>
+          <span class="app-lock-option-body">
+            <span class="app-lock-option-title">Démo</span>
+          </span>
+        </button>
+        <button type="button" id="appLockChooseLicense" class="app-lock-option">
+          <span class="app-lock-option-ico app-lock-option-ico--svg" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="12" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M11.5 12h7l-1.4 1.4 1.4 1.4-1.4 1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="app-lock-option-body">
+            <span class="app-lock-option-title">Clé</span>
+          </span>
+        </button>
+      </div>
+      <p class="app-lock-footer-brand">IC INVOOCOFFEE · Données 100% locales ·</p>
+    </div>
+
+    <div id="appLockViewLicense" class="app-lock-view" hidden>
+      <button type="button" id="appLockLicenseBack" class="app-lock-back">← Retour</button>
+      <div class="app-lock-hero app-lock-hero--compact">
+        <img src="./icons/ic-invoocoffee.svg" alt="" class="app-lock-logo app-lock-logo--sm" width="48" height="48" decoding="async" loading="eager" />
+      </div>
+      <h1 class="app-lock-title">Entrez votre clé de licence</h1>
+      <p class="app-lock-sub">Format indicatif : <span class="app-lock-mono-hint">INVOO####</span></p>
+      <label class="app-lock-label" for="appLockLicenseInput">Clé de licence</label>
+      <input type="text" id="appLockLicenseInput" class="app-lock-input app-lock-input--mono" placeholder="INVOO####" autocomplete="off" spellcheck="false" autocapitalize="characters" />
+      <div class="app-lock-actions">
+        <button type="button" id="appLockLicenseSubmit" class="app-lock-btn app-lock-btn--primary">Valider</button>
+      </div>
+      <div class="app-lock-row">
+        <a id="appLockWaOrder" class="app-lock-wa-inline" href="#" rel="noopener noreferrer" target="_blank">Pas encore de clé ? Commander via WhatsApp →</a>
+      </div>
+      <p class="app-lock-footer-brand">IC INVOOCOFFEE · Données 100% locales ·</p>
+    </div>
+
+    <div id="appLockViewLogin" class="app-lock-view" hidden>
+      <div class="app-lock-hero app-lock-hero--compact">
+        <img src="./icons/ic-invoocoffee.svg" alt="" class="app-lock-logo app-lock-logo--sm" width="48" height="48" decoding="async" loading="eager" />
+      </div>
+      <h1 id="appLockTitleLogin" class="app-lock-title">Accéder à l’interface</h1>
+      <p class="app-lock-sub" id="appLockLoginHint">Entrez le mot de passe pour utiliser la caisse.</p>
+      <label class="app-lock-label" for="appLockPassword">Mot de passe</label>
+      <input type="password" id="appLockPassword" class="app-lock-input" autocomplete="current-password" />
+      <div class="app-lock-actions">
+        <button type="button" id="appLockSubmitLogin" class="app-lock-btn app-lock-btn--primary">Accéder à l’interface</button>
+      </div>
+      <div class="app-lock-row">
+        <button type="button" id="appLockForgot" class="app-lock-link">Mot de passe oublié ?</button>
+      </div>
+      <p class="app-lock-footer-brand">INVOOCOFFEE · Données 100% locales</p>
+    </div>
+
+    <div id="appLockViewSetup" class="app-lock-view" hidden>
+      <h1 id="appLockTitleSetup" class="app-lock-title">Créez votre mot de passe</h1>
+      <p class="app-lock-sub">Après validation de votre clé, choisissez un mot de passe pour sécuriser l’application sur cet appareil.</p>
+      <label class="app-lock-label" for="appLockNewPw">Nouveau mot de passe</label>
+      <input type="password" id="appLockNewPw" class="app-lock-input" autocomplete="new-password" />
+      <label class="app-lock-label" for="appLockNewPw2">Confirmer le mot de passe</label>
+      <input type="password" id="appLockNewPw2" class="app-lock-input" autocomplete="new-password" />
+      <div class="app-lock-actions">
+        <button type="button" id="appLockSavePw" class="app-lock-btn app-lock-btn--primary">Enregistrer et accéder</button>
+      </div>
+      <p class="app-lock-footer-brand">INVOOCOFFEE · Données 100% locales</p>
+    </div>
+
+    <div id="appLockViewForgot" class="app-lock-view" hidden>
+      <h1 class="app-lock-title">Réinitialiser le mot de passe</h1>
+      <p class="app-lock-sub">Saisissez votre clé de licence, puis choisissez un nouveau mot de passe.</p>
+      <div id="appLockForgotStep1">
+        <label class="app-lock-label" for="appLockMasterForgot">Clé de licence</label>
+        <input type="text" id="appLockMasterForgot" class="app-lock-input app-lock-input--mono" placeholder="INVOO####" autocomplete="off" spellcheck="false" autocapitalize="characters" />
+        <div class="app-lock-actions app-lock-actions--split">
+          <button type="button" id="appLockForgotBack" class="app-lock-btn app-lock-btn--ghost">Retour</button>
+          <button type="button" id="appLockMasterForgotBtn" class="app-lock-btn app-lock-btn--primary">Continuer</button>
+        </div>
+      </div>
+      <div id="appLockForgotStep2" hidden>
+        <label class="app-lock-label" for="appLockNewPwForgot">Nouveau mot de passe</label>
+        <input type="password" id="appLockNewPwForgot" class="app-lock-input" autocomplete="new-password" />
+        <label class="app-lock-label" for="appLockNewPw2Forgot">Confirmer</label>
+        <input type="password" id="appLockNewPw2Forgot" class="app-lock-input" autocomplete="new-password" />
+        <div class="app-lock-actions">
+          <button type="button" id="appLockSavePwForgot" class="app-lock-btn app-lock-btn--primary">Enregistrer le nouveau mot de passe</button>
+        </div>
+      </div>
+      <p class="app-lock-footer-brand">INVOOCOFFEE · Données 100% locales</p>
+    </div>
+
+    <div id="appLockViewDemoEnd" class="app-lock-view" hidden>
+      <h1 class="app-lock-title">Démo terminée</h1>
+      <p class="app-lock-sub">Les 20 minutes d’essai sont écoulées. Pour une clé d’accès ou l’abonnement, contactez l’administration via WhatsApp.</p>
+      <div class="app-lock-actions app-lock-actions--stack">
+        <a id="appLockWaBtn" class="app-lock-btn app-lock-btn--whatsapp" href="#" rel="noopener noreferrer" target="_blank">Contacter sur WhatsApp</a>
+        <button type="button" id="appLockDemoEndLogin" class="app-lock-btn app-lock-btn--secondary">Se connecter (mot de passe)</button>
+        <button type="button" id="appLockDemoEndMaster" class="app-lock-btn app-lock-btn--ghost">J’ai une clé de licence</button>
+      </div>
+      <p class="app-lock-footer-brand">INVOOCOFFEE · Données 100% locales</p>
+    </div>
+  </div>
+</div>
+
+<div id="multiTabWarn" class="multi-tab-banner" hidden>
+  <span>Attention : un autre onglet utilise la caisse. Risque de conflit sur le stock — gardez un seul onglet ouvert.</span>
+  <button type="button" class="multi-tab-dismiss" onclick="document.getElementById('multiTabWarn').hidden=true">Fermer</button>
+</div>
+<header>
+  <div class="logo" id="headerLogo">☕ <span id="headerLogoName">Caisse</span></div>
+  <div class="tabs">
+    <button type="button" class="tab active" data-page="caisse" onclick="showPage('caisse')">🧾 Caisse</button>
+    <button type="button" class="tab" data-page="stock" onclick="showPage('stock')">📦 Stock</button>
+    <button type="button" class="tab" data-page="historique" onclick="showPage('historique')">📊 Historique</button>
+    <button type="button" class="tab" data-page="parametres" onclick="showPage('parametres')">⚙ Paramètres</button>
+  </div>
+  <div class="header-right">
+    <span id="demoCountdown" class="demo-countdown" hidden role="timer" aria-live="polite" aria-atomic="true"></span>
+    <button type="button" class="header-logout-btn" id="headerLogoutBtn" title="Fermer la session et afficher l’écran d’accès">Déconnexion</button>
+    <span class="z-header-status" id="zHeaderStatus" title="Z de caisse"></span>
+    <div class="date-display" id="headerDate"></div>
+  </div>
+</header>
+
+<!-- ============ PAGE CAISSE ============ -->
+<div class="page active" id="page-caisse">
+  <div class="caisse-mobile-tabs" role="tablist" aria-label="Vue caisse mobile">
+    <button type="button" role="tab" class="caisse-tab active" id="caisseTabArticles" aria-selected="true" data-pane="articles" onclick="setCaisseMobilePane('articles')">Articles</button>
+    <button type="button" role="tab" class="caisse-tab" id="caisseTabPanier" aria-selected="false" data-pane="panier" onclick="setCaisseMobilePane('panier')">Panier <span class="caisse-tab-badge" id="caissePanierBadge" hidden>0</span></button>
+  </div>
+  <div class="caisse-grid caisse-pane-active-articles" id="caisseRoot">
+    <div class="caisse-col-articles">
+      <div class="caisse-head-row">
+        <div class="section-title caisse-section-title">☕ Articles</div>
+        <label class="ui-toggle rush-mode-toggle" title="Liste compacte pour enchaîner les commandes">
+          <input type="checkbox" id="rushModeCheck" class="ui-toggle-input" onchange="toggleRushModeFromUi()">
+          <span class="ui-toggle-inner">
+            <span class="ui-toggle-text">Mode rush</span>
+            <span class="ui-toggle-track" aria-hidden="true"><span class="ui-toggle-thumb"></span></span>
+            <span class="ui-toggle-badge ui-toggle-badge--off">Désactivé</span>
+            <span class="ui-toggle-badge ui-toggle-badge--on">Activé</span>
+          </span>
+        </label>
+      </div>
+      <div class="cat-filter" id="catFilter"></div>
+      <div class="articles-grid" id="articlesGrid"></div>
+    </div>
+
+    <aside class="panier-panel" id="panierPanel" aria-label="Commande en cours">
+      <div class="panier-header">
+        <div class="panier-title">🛒 Commande en cours</div>
+        <span id="panierId" class="panier-id-meta"></span>
+      </div>
+      <div class="panier-items" id="panierItems"></div>
+      <div class="panier-footer">
+        <div class="panier-total-bar" aria-live="polite">
+          <span class="panier-total-lbl">Total</span>
+          <span class="panier-total-val" id="grandTotal">0.00 MAD</span>
+        </div>
+        <div class="panier-fields-grid">
+          <div class="panier-field">
+            <label class="panier-field-label" for="tableSelect">Table</label>
+            <select class="serveur-select" id="tableSelect" aria-label="Table ou salle"></select>
+          </div>
+          <div class="panier-field">
+            <label class="panier-field-label" for="serveurSelect">Serveur</label>
+            <select class="serveur-select" id="serveurSelect" aria-label="Serveur ou camériste"></select>
+          </div>
+          <div class="panier-field panier-field--full">
+            <label class="panier-field-label" for="payModeSelect">Paiement</label>
+            <select class="serveur-select" id="payModeSelect" aria-label="Mode de paiement">
+              <option value="especes">Espèces</option>
+              <option value="carte">Carte</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="panier-field panier-field--full">
+            <label class="panier-field-label" for="clientName">Client</label>
+            <input class="client-input client-input--compact" id="clientName" name="client" placeholder="Optionnel · nom sur le ticket" autocomplete="name" />
+          </div>
+        </div>
+        <button type="button" class="btn-facturer" id="btnFacturer" onclick="facturer()" disabled aria-label="Valider la commande et ouvrir le ticket">
+          ✓ Valider &amp; imprimer la facture
+        </button>
+        <button type="button" class="btn-vider" onclick="viderPanier()">🗑 Vider le panier</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ============ PAGE STOCK ============ -->
+<div class="page" id="page-stock">
+  <div class="stock-layout">
+    <div class="stock-table-wrap">
+      <div id="stockAlertBox" class="stock-alert-box" hidden></div>
+      <div class="stock-toolbar">
+        <div class="section-title section-title--toolbar">📦 Gestion du Stock</div>
+        <input class="search-box" id="stockSearch" placeholder="🔍 Rechercher un article...">
+        <button class="btn-export" onclick="exportJSON()">⬇ JSON</button>
+        <button class="btn-export" onclick="exportCSV()">⬇ CSV</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th>Catégorie</th>
+            <th>Prix</th>
+            <th>Coût</th>
+            <th>Marge</th>
+            <th>Stock</th>
+            <th>Vendu</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="stockBody"></tbody>
+      </table>
+    </div>
+
+    <div class="form-panel">
+      <div class="section-title">➕ Ajouter / Modifier</div>
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label class="form-label">Nom de l'article *</label>
+        <input class="form-input" id="fNom" placeholder="Ex: Café Espresso">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Icône</label>
+        <input class="form-input" id="fEmoji" placeholder="☕" maxlength="8" oninput="buildIconPicker()">
+        <div class="icon-picker-wrap">
+          <span class="icon-picker-label">Choisir (café & restauration)</span>
+          <div class="icon-picker" id="iconPicker"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="fCat">Catégorie</label>
+        <select class="form-select" id="fCat"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prix vente (MAD) *</label>
+        <input class="form-input" id="fPrix" type="number" step="0.5" min="0" placeholder="15.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prix d'achat (MAD) — optionnel</label>
+        <input class="form-input" id="fPrixAchat" type="number" step="0.01" min="0" placeholder="Pour marge">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantité en stock</label>
+        <input class="form-input" id="fStock" type="number" min="0" placeholder="100">
+        <div class="stock-illimite-row">
+          <div class="stock-illimite-copy">
+            <span class="stock-illimite-title">Stock illimité</span>
+            <span class="stock-illimite-desc">Ne décompte pas à la vente</span>
+          </div>
+          <label class="ui-toggle stock-illimite-toggle" for="fStockIllimite">
+            <input type="checkbox" id="fStockIllimite" class="ui-toggle-input" onchange="toggleStockField()">
+            <span class="ui-toggle-inner">
+              <span class="ui-toggle-track" aria-hidden="true"><span class="ui-toggle-thumb"></span></span>
+              <span class="ui-toggle-badge ui-toggle-badge--off">Désactivé</span>
+              <span class="ui-toggle-badge ui-toggle-badge--on">Activé</span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Seuil alerte stock</label>
+        <input class="form-input" id="fStockSeuil" type="number" min="-1" step="1" placeholder="5 (—1 = désactivé)">
+        <span class="form-hint">En dessous = alerte « à commander ». —1 pour désactiver.</span>
+      </div>
+      <button type="button" class="btn-add" id="btnStockSave" onclick="sauvegarderArticle()">✓ Sauvegarder l'article</button>
+      <button class="btn-export" style="width:100%;margin-top:8px;justify-content:center" onclick="annulerEdit()">✕ Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE PARAMÈTRES ============ -->
+<div class="page" id="page-parametres">
+  <div class="settings-layout">
+    <div class="settings-card">
+      <h2>Informations du café</h2>
+      <div class="settings-grid">
+        <div class="full">
+          <label class="form-label">Nom du café</label>
+          <input class="form-input" id="sNomCafe" placeholder="Ex: Café du Port">
+        </div>
+        <div class="full">
+          <label class="form-label">Adresse</label>
+          <input class="form-input" id="sAdresse" placeholder="Rue, ville...">
+        </div>
+        <div>
+          <label class="form-label">Téléphone</label>
+          <input class="form-input" id="sTel" type="tel" placeholder="+212 ...">
+        </div>
+        <div>
+          <label class="form-label">Email</label>
+          <input class="form-input" id="sEmail" type="email" placeholder="contact@...">
+        </div>
+        <div>
+          <label class="form-label">Nombre de tables</label>
+          <input class="form-input" id="sNbTables" type="number" min="0" placeholder="12">
+        </div>
+        <div class="full">
+          <label class="form-label">Message de bas de ticket</label>
+          <textarea class="form-input" id="sMsgTicket" placeholder="Merci de votre visite !"></textarea>
+        </div>
+      </div>
+      <button class="btn-add" style="margin-top:16px" onclick="saveSettingsUi()">Enregistrer les informations</button>
+    </div>
+
+    <div class="settings-card">
+      <h2>Catégories articles</h2>
+      <p style="font-size:0.8rem;color:var(--text2);margin-bottom:10px">Une catégorie par ligne (utilisées dans le stock et les filtres).</p>
+      <textarea class="form-input" id="sCategories" rows="6" placeholder="Boissons chaudes&#10;Boissons froides"></textarea>
+      <button type="button" class="btn-add" style="margin-top:12px" onclick="saveCategoriesUi()">Enregistrer les catégories</button>
+    </div>
+
+    <div class="settings-card">
+      <h2>Sécurité accès caisse</h2>
+      <p class="backup-desc">Définissez un mot de passe dédié pour le mode <strong>Caisse</strong>. Si vide, la caisse continue d'utiliser le mot de passe administrateur.</p>
+      <p class="backup-reminder" id="caissePwStatusLine"></p>
+      <div class="settings-grid" style="margin-top:10px">
+        <div>
+          <label class="form-label" for="sCaissePw">Nouveau mot de passe caisse</label>
+          <input class="form-input" id="sCaissePw" type="password" autocomplete="new-password" placeholder="Minimum 4 caractères">
+        </div>
+        <div>
+          <label class="form-label" for="sCaissePw2">Confirmer le mot de passe</label>
+          <input class="form-input" id="sCaissePw2" type="password" autocomplete="new-password" placeholder="Retapez le mot de passe">
+        </div>
+      </div>
+      <div class="backup-actions" style="margin-top:12px">
+        <button type="button" class="btn-add" onclick="saveCaissePasswordUi()">Enregistrer mot de passe caisse</button>
+        <button type="button" class="btn-import" onclick="clearCaissePasswordUi()">Supprimer mot de passe caisse</button>
+      </div>
+    </div>
+
+    <div class="settings-card supabase-sync-card" id="supabaseSyncCard">
+      <h2>Sync multi-appareils — Supabase</h2>
+      <p class="backup-desc">Synchronisez le <strong>stock (articles)</strong> et l’<strong>historique (factures)</strong> entre plusieurs navigateurs ou appareils. Optionnel : vous pouvez laisser désactivé.</p>
+
+      <div class="supabase-sync-enable-row">
+        <label class="ui-toggle supabase-main-toggle" for="supabaseSyncEnabled">
+          <input type="checkbox" id="supabaseSyncEnabled" class="ui-toggle-input" onchange="onSupabaseSyncToggleChange()">
+          <span class="ui-toggle-inner">
+            <span class="ui-toggle-text">Synchronisation Supabase</span>
+            <span class="ui-toggle-track" aria-hidden="true"><span class="ui-toggle-thumb"></span></span>
+            <span class="ui-toggle-badge ui-toggle-badge--off">Désactivé</span>
+            <span class="ui-toggle-badge ui-toggle-badge--on">Activé</span>
+          </span>
+        </label>
+      </div>
+
+      <button type="button" class="btn-outline supabase-help-btn" id="supabaseHelpToggle" onclick="toggleSupabaseHelpPanel()" aria-expanded="false">
+        Comment configurer ?
+      </button>
+      <div id="supabaseHelpPanel" class="supabase-help-panel" hidden>
+        <ol class="supabase-help-steps">
+          <li>Ouvrez <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer">Supabase</a> et créez un projet (gratuit).</li>
+          <li>Allez dans <strong>SQL Editor</strong>, collez le script ci-dessous et exécutez-le <strong>une seule fois</strong>.</li>
+          <li>Récupérez l’URL du projet (<strong>Settings → API → Project URL</strong>) et la clé <strong>anon public</strong> (pas <code>service_role</code>).</li>
+          <li>Collez-les ci-dessous, puis <strong>Connecter &amp; synchroniser</strong>.</li>
+        </ol>
+        <label class="form-label" for="supabaseSqlTa">Script SQL — à exécuter une fois dans Supabase → SQL Editor</label>
+        <textarea id="supabaseSqlTa" class="form-input supabase-sql-ta" readonly rows="14" spellcheck="false" aria-label="Script SQL Supabase"></textarea>
+        <button type="button" class="btn-export" onclick="copySupabaseSql()">Copier le script SQL</button>
+      </div>
+
+      <div class="settings-grid supabase-credentials-grid" style="margin-top:14px">
+        <div class="full">
+          <label class="form-label" for="supabaseUrl">Project URL</label>
+          <input class="form-input" id="supabaseUrl" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+          <span class="form-hint">Ouvrir Supabase → <strong>Project Settings → API</strong></span>
+        </div>
+        <div class="full">
+          <label class="form-label" for="supabaseAnonKey">Clé API (anon public)</label>
+          <input class="form-input supabase-key-input" id="supabaseAnonKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…" autocomplete="off">
+          <span class="form-hint supabase-key-warning">Utilisez la clé <strong>anon public</strong> — jamais la clé <code>service_role</code> (elle contourne la sécurité).</span>
+        </div>
+      </div>
+
+      <div class="supabase-daily-sync-block" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+        <label class="ui-toggle supabase-daily-toggle" for="supabaseDailySyncEnabled">
+          <input type="checkbox" id="supabaseDailySyncEnabled" class="ui-toggle-input" onchange="onSupabaseDailySyncToggleChange()">
+          <span class="ui-toggle-inner">
+            <span class="ui-toggle-text">Synchro automatique à l’heure choisie</span>
+            <span class="ui-toggle-track" aria-hidden="true"><span class="ui-toggle-thumb"></span></span>
+            <span class="ui-toggle-badge ui-toggle-badge--off">Off</span>
+            <span class="ui-toggle-badge ui-toggle-badge--on">On</span>
+          </span>
+        </label>
+        <div class="supabase-daily-time-row" style="margin-top:12px">
+          <label class="form-label" for="supabaseDailySyncTime">Heure locale (chaque jour)</label>
+          <input class="form-input supabase-time-input" id="supabaseDailySyncTime" type="time" value="03:00" onchange="onSupabaseDailySyncTimeChange()">
+          <span class="form-hint">À cette heure, une synchronisation vers Supabase est lancée automatiquement (même logique que « Synchroniser maintenant »). L’application doit rester ouverte dans un onglet à ce moment-là.</span>
+        </div>
+      </div>
+
+      <div class="backup-actions supabase-actions" style="margin-top:14px">
+        <button type="button" class="btn-export-main" onclick="connectSupabaseSync()">Connecter &amp; synchroniser</button>
+        <button type="button" class="btn-export" onclick="syncSupabaseNow()">Synchroniser maintenant</button>
+        <button type="button" class="btn-import" onclick="disconnectSupabaseSync()">Déconnecter</button>
+      </div>
+      <p class="quota-line supabase-sync-status" id="supabaseSyncStatus" role="status"></p>
+    </div>
+
+    <div class="settings-card">
+      <h2>Z de caisse (jour)</h2>
+      <p class="backup-desc" id="zSessionDesc">Aucune session ouverte.</p>
+      <div class="settings-grid" style="margin-top:12px">
+        <div>
+          <label class="form-label">Fond de caisse ouverture (MAD)</label>
+          <input class="form-input" id="zFondOuverture" type="number" step="0.5" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="backup-actions" style="margin-top:12px">
+        <button type="button" class="btn-export-main" onclick="ouvrirCaisseZ()">Ouvrir la caisse</button>
+        <button type="button" class="btn-import" onclick="cloturerCaisseZ()">Clôturer &amp; calculer Z</button>
+        <button type="button" class="btn-export" onclick="exportZJourPdf()">Exporter Z (PDF)</button>
+      </div>
+      <div id="zCloturePanel" class="z-cloture-panel" hidden>
+        <label class="form-label">Montant compté en caisse (MAD)</label>
+        <input class="form-input" id="zMontantCompte" type="number" step="0.5" min="0" placeholder="Comptage réel">
+        <p class="form-hint" id="zTheoriqueLine"></p>
+        <button type="button" class="btn-add" style="margin-top:10px" onclick="validerClotureZ()">Valider clôture</button>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <h2>Serveurs / caméristes</h2>
+      <p style="font-size:0.8rem;color:var(--text2);margin-bottom:12px">Les prénoms apparaissent dans le menu déroulant de la caisse.</p>
+      <div id="serveursList"></div>
+      <button type="button" class="btn-small teal" style="margin-top:8px" onclick="addServeurRow()">+ Ajouter un serveur</button>
+      <button class="btn-add" style="margin-top:14px" onclick="saveServeursUi()">Enregistrer les serveurs</button>
+    </div>
+
+    <div class="settings-card">
+      <h2>Sauvegarde &amp; restauration</h2>
+      <div class="backup-hero">
+        <span class="big-emoji">🗄️</span>
+        <div>
+          <div class="backup-status" id="opfsStatusLine">Vérification du stockage…</div>
+          <p class="backup-desc">Stockage automatique dans ce navigateur, sans limite d’espace côté fichier (OPFS). Pensez à exporter une sauvegarde pour transférer vos données sur un autre appareil.</p>
+          <div class="quota-line" id="quotaLine"></div>
+          <p class="backup-reminder opfs-restore-success" id="opfsRestoreSuccessLine" hidden>Restauration OPFS effectuée.</p>
+          <p class="backup-reminder" id="backupReminderLine"></p>
+        </div>
+      </div>
+      <div class="portable-block">
+        <h3>📦 Sauvegarde portable</h3>
+        <p>Exportez vos données en fichier JSON — pour une clé USB, un autre appareil ou une archive. Importez le même format pour restaurer articles, factures et réglages.</p>
+        <div class="backup-actions">
+          <button type="button" class="btn-export-main" onclick="exportFullBackup()">Exporter (JSON)</button>
+          <button type="button" class="btn-import" onclick="document.getElementById('importFile').click()">Importer (JSON)</button>
+          <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importFullBackup(event)">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE HISTORIQUE ============ -->
+<div class="page" id="page-historique">
+  <div class="histo-layout">
+    <div class="section-title">Analyse &amp; rapport de vente</div>
+
+    <div class="histo-toolbar">
+      <div class="histo-presets">
+        <button type="button" class="histo-chip" data-preset="today" onclick="setHistoPreset('today')">Aujourd'hui</button>
+        <button type="button" class="histo-chip" data-preset="week" onclick="setHistoPreset('week')">Cette semaine</button>
+        <button type="button" class="histo-chip" data-preset="month" onclick="setHistoPreset('month')">Ce mois</button>
+        <button type="button" class="histo-chip" data-preset="lastmonth" onclick="setHistoPreset('lastmonth')">Mois dernier</button>
+        <button type="button" class="histo-chip" data-preset="all" onclick="setHistoPreset('all')">Tout</button>
+      </div>
+      <div class="histo-table-filter">
+        <label class="histo-date-lbl" for="histoTableFilter">Table</label>
+        <select class="histo-date-input" id="histoTableFilter" onchange="setHistoTableFilter(this.value)" title="Filtrer par table" aria-label="Filtrer par table">
+          <option value="">Toutes</option>
+        </select>
+      </div>
+      <div class="histo-custom-dates">
+        <label class="histo-date-lbl" for="histoDateFrom">Date début</label>
+        <input type="date" class="histo-date-input" id="histoDateFrom" title="Date début" autocomplete="off">
+        <span class="histo-date-sep" aria-hidden="true">au</span>
+        <label class="sr-only" for="histoDateTo">Date fin</label>
+        <input type="date" class="histo-date-input" id="histoDateTo" title="Date fin" autocomplete="off">
+        <button type="button" class="btn-outline btn-histo-apply" onclick="applyHistoCustomRange()">Appliquer</button>
+      </div>
+      <div class="histo-toolbar-actions">
+        <button type="button" class="btn-export-main histo-pdf-btn" onclick="exportHistoPdf()">Exporter PDF</button>
+        <button type="button" class="btn-export" onclick="exportFacturesJSON()">JSON factures</button>
+      </div>
+    </div>
+    <p class="histo-range-label" id="histoRangeLabel"></p>
+
+    <div class="histo-stats histo-stats-main" id="histoStats"></div>
+
+    <div class="histo-analytics-grid">
+      <div class="histo-panel histo-panel-chart">
+        <h3 class="histo-panel-title">Chiffre d'affaires</h3>
+        <div class="histo-chart-wrap">
+          <canvas id="histoChartCanvas" width="400" height="220"></canvas>
+        </div>
+      </div>
+      <div class="histo-panel">
+        <h3 class="histo-panel-title">Top 5 articles vendus</h3>
+        <div class="histo-table-wrap" id="histoTop5"></div>
+      </div>
+      <div class="histo-panel histo-panel-wide">
+        <h3 class="histo-panel-title">Performance par serveur</h3>
+        <div class="histo-table-wrap" id="histoServers"></div>
+      </div>
+    </div>
+
+    <div class="section-title histo-factures-title">Détail des factures <span class="histo-factures-count" id="histoFacturesCount"></span></div>
+    <div class="factures-list" id="facturesList"></div>
+  </div>
+</div>
+
+<!-- MODAL FACTURE -->
+<div class="modal-overlay" id="modalOverlay" role="presentation">
+  <div class="modal" id="modalContent" role="dialog" aria-modal="true" aria-label="Aperçu du ticket" tabindex="-1"></div>
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notif"></div>
+<div class="install-banner" id="installBanner" hidden role="region" aria-label="Installer l'application">
+  <div class="install-banner__text">Installez l'application pour un accès plus rapide, même hors ligne.</div>
+  <div class="install-banner__actions">
+    <button type="button" class="install-banner__btn install-banner__btn--primary" id="installBannerBtn">Installer</button>
+    <button type="button" class="install-banner__btn" id="installBannerClose" aria-label="Fermer la suggestion d'installation">Fermer</button>
+  </div>
+</div>
+<script src="js/app-lock-config.js" defer></script>
+<script src="js/app-lock.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>

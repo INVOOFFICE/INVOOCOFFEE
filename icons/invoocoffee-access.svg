@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="csBg" x1="32" y1="24" x2="168" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#09BC8A" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#07a378" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="csCup" x1="48" y1="72" x2="144" y2="168" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0ECFA0"/>
+      <stop offset="1" stop-color="#09BC8A"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="36" fill="#0f1923"/>
+  <rect x="14" y="14" width="164" height="164" rx="28" fill="url(#csBg)"/>
+
+  <path fill="#09BC8A" d="M24 40h144v10H24V40z"/>
+  <path fill="#07a378" d="M24 50h144l-8 14c-2 3-5 5-9 5H41c-4 0-7-2-9-5l-8-14z"/>
+  <g opacity="0.92">
+    <rect x="30" y="40" width="11" height="10" fill="#F0A500"/>
+    <rect x="52" y="40" width="11" height="10" fill="#F0A500" opacity="0.4"/>
+    <rect x="74" y="40" width="11" height="10" fill="#F0A500"/>
+    <rect x="96" y="40" width="11" height="10" fill="#F0A500" opacity="0.4"/>
+    <rect x="118" y="40" width="11" height="10" fill="#F0A500"/>
+    <rect x="140" y="40" width="11" height="10" fill="#F0A500" opacity="0.4"/>
+    <rect x="162" y="40" width="11" height="10" fill="#F0A500"/>
+  </g>
+
+  <rect x="66" y="28" width="60" height="11" rx="2" fill="#1a2736" stroke="#F0A500" stroke-width="1.2" opacity="0.95"/>
+  <path stroke="#F0A500" stroke-width="1.8" stroke-linecap="round" fill="none" d="M72 32h48M72 35.5h38M72 39h44" opacity="0.95"/>
+
+  <path stroke="#F0A500" stroke-width="3.2" stroke-linecap="round" fill="none" d="M76 78c4-11 4-20 0-29M96 74c5-13 5-24 0-35M116 78c4-11 4-20 0-29"/>
+
+  <ellipse cx="96" cy="170" rx="50" ry="7" fill="#141f2b" stroke="#09BC8A" stroke-opacity="0.4" stroke-width="1"/>
+
+  <g transform="translate(4, 22)">
+    <path fill="url(#csCup)" d="M48 72h88v8H48v-8zm0 20h72c0 28-20 52-48 56v8h56v8H40v-24c18-4 32-18 38-36H48V92zm88 4h16v40c0 12-8 20-20 20h-8v-8h8c8 0 12-4 12-12V96h-8v-8z"/>
+    <circle cx="96" cy="52" r="6" fill="#F0A500"/>
+  </g>
+</svg>
