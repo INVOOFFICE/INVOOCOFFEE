@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervision caisse — COFFE</title>
+  <meta name="theme-color" content="#09BC8A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="COFFE Controle">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/ic-controlecoffee.svg">
+  <link rel="apple-touch-icon" href="icons/ic-controlecoffee.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="controle.css">
+</head>
+<body>
+  <header class="controle-header">
+    <h1 class="controle-brand">Supervision &amp; révision</h1>
+    <p class="controle-sub">
+      Vue <strong>lecture seule</strong> du stock et de l’historique synchronisés via Supabase. Interface indépendante de la caisse — ouvrez cette page directement (signet ou raccourci).
+    </p>
+    <div class="pwa-banner" id="pwaBanner" hidden>
+      <span id="pwaStateText">Etat installation: verification...</span>
+      <button type="button" class="btn btn-primary" id="btnInstallPwa">Installer l'application</button>
+    </div>
+  </header>
+
+  <main class="controle-main">
+    <section class="panel" aria-labelledby="cfg-title">
+      <h2 id="cfg-title">Connexion Supabase</h2>
+      <p class="hint" style="margin-top:0;margin-bottom:14px">
+        Utilisez les <strong>mêmes identifiants</strong> que dans Paramètres → Sync multi-appareils (URL du projet + clé <strong>anon</strong> — jamais <code>service_role</code>).
+      </p>
+      <p class="security-note" role="note">
+        Sécurité : cette page est à usage interne uniquement, sur un appareil dédié non partagé. La clé anon est stockée localement sur ce navigateur.
+      </p>
+      <div class="form-grid">
+        <div class="full">
+          <label class="field-label" for="cfgUrl">Project URL</label>
+          <input class="field-input" id="cfgUrl" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off">
+        </div>
+        <div class="full">
+          <label class="field-label" for="cfgKey">Clé API (anon public)</label>
+          <input class="field-input" id="cfgKey" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…" autocomplete="off">
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center">
+        <button type="button" class="btn btn-primary" id="btnSync">Synchroniser</button>
+        <button type="button" class="btn btn-danger" id="btnClear" title="Efface URL + clé enregistrées sur cet appareil">Déconnexion (effacer la clé locale)</button>
+      </div>
+      <div id="syncStatus" class="status-banner" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="stats-title">
+      <h2 id="stats-title">Synthèse</h2>
+      <div class="stats-row">
+        <div class="stat-pill">Articles (sync) : <strong id="statArticles">0</strong></div>
+        <div class="stat-pill">Factures (période) : <strong id="statFacturesPeriod">0</strong></div>
+        <div class="stat-pill">CA période : <strong id="statCaPeriod">0 MAD</strong></div>
+        <div class="stat-pill">Factures (total sync) : <strong id="statFacturesTotal">0</strong></div>
+        <div class="stat-pill">Dernière MAJ cloud : <strong id="statUpdated">—</strong></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="stock-title">
+      <h2 id="stock-title">Stock (articles)</h2>
+      <div id="stockTableWrap"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="histo-title">
+      <h2 id="histo-title">Historique (factures)</h2>
+
+      <div class="controle-histo-toolbar" id="controleHistoToolbar" hidden>
+        <div class="controle-presets" role="group" aria-label="Période rapide">
+          <button type="button" class="controle-chip" data-preset="today">Aujourd'hui</button>
+          <button type="button" class="controle-chip" data-preset="week">Cette semaine</button>
+          <button type="button" class="controle-chip" data-preset="month">Ce mois</button>
+          <button type="button" class="controle-chip" data-preset="lastmonth">Mois dernier</button>
+          <button type="button" class="controle-chip" data-preset="all">Tout</button>
+        </div>
+        <div class="controle-filters-block">
+          <div class="controle-filter-field">
+            <label class="field-label" for="controleTableFilter">Table</label>
+            <select id="controleTableFilter" class="field-input controle-select">
+              <option value="">Toutes les tables</option>
+            </select>
+          </div>
+          <div class="controle-custom-dates">
+            <span class="controle-date-lbl">Date début</span>
+            <input type="date" id="controleDateFrom" class="field-input controle-date-input" title="Date début" autocomplete="off">
+            <span class="controle-date-sep">au</span>
+            <label class="sr-only" for="controleDateTo">Date fin</label>
+            <input type="date" id="controleDateTo" class="field-input controle-date-input" title="Date fin" autocomplete="off">
+            <button type="button" class="btn btn-ghost btn-apply-dates" id="btnControleApply">Appliquer</button>
+          </div>
+        </div>
+        <div class="controle-toolbar-actions">
+          <button type="button" class="btn btn-primary btn-pdf" id="btnControlePdf">Exporter PDF</button>
+          <button type="button" class="btn btn-ghost" id="btnControleJson">JSON factures</button>
+        </div>
+      </div>
+      <p class="controle-range-label" id="controleRangeLabel" hidden></p>
+
+      <div id="facturesList" class="factures-list"></div>
+    </section>
+  </main>
+
+  <p class="footer-note">
+    Les données reflètent l’instant de la dernière synchronisation Supabase. Utilisez « Synchroniser » pour actualiser.
+  </p>
+
+  <script src="controle.js"></script>
+</body>
+</html>
